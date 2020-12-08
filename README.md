@@ -436,7 +436,17 @@ pivot을 설정하는 방법은 랜덤으로 줄 수도 있고 맨 왼쪽에도 
 
 평균 case에 효율적이며, 가상 메모리 환경에서 사용하기 좋다. 하지만, pivot을 어떻게 설정하느냐에 따라 퍼포먼스가 매우 다름. Worst case인 unbalanced인 경우에는 오히려 Insertion Sort가 더 좋다.
 
+Worst-case running time : Θ(n^2^)
 
+Expected running time : Θ(nlogn)
+
+
+
+![img](README%20assets/quick-sort2.png)
+
+
+
+[left pivot]
 
 ```c
 #include <stdio.h>
@@ -513,4 +523,418 @@ int main()
     return 0;
 }
 ```
+
+
+
+pseudo code
+
+```c
+QUICKSORT(A, p, r)
+if p < r
+	then q <- PARTITION(A, p, r)
+		QUICKSORT(A, p, q-1)
+		QUICKSORT(A, q+1, r)
+//Initial call is QUICKSORT(A, 1, n)
+    
+PARTITION(A, p, r)
+    x = A[r]
+    i = p-1
+    for j=p to r-1
+        if A[j] <= x
+            i = i+1
+            exchange A[i] with A[j]
+    exchange A[i+1] with A[r]
+    return i+1
+```
+
+
+
+
+
+## Q1. Find largest number possible from set of given numbers.
+
+ex) 
+
+input : {10, 68, 75, 7, 21, 12}
+
+output : 77568211210
+
+
+
+[C++]
+
+```c++
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+ 
+using namespace std;
+ 
+// sort using a custom function object
+struct {
+    bool operator()(string a, string b)
+    {
+        string value1 = a + b;
+        string value2 = b + a;
+ 
+        return value1 > value2;
+    }
+} customCompare;
+ 
+int main()
+{
+    vector<string> numbers = { "10", "68", "97", "9", "21", "12" };
+ 
+    // custom sort
+    sort(begin(numbers), end(numbers), customCompare);
+ 
+    // print the sorted sequence
+    for (const auto& elem : numbers) {
+        cout << elem;
+    }
+ 
+    return 0;
+}
+```
+
+Time complexity : O(nlog(n))
+
+auxiliary space : O(1)
+
+
+
+## Q2. Sort Binary Array in Linear Time
+
+ex)
+
+input : { 1,0,1,0,1,0,0,1 }
+
+output : { 0,0,0,0,1,1,1,1 }
+
+
+
+[Python]
+
+```python
+# Function to sort binary list in linear time
+def sort(A):
+    
+    zeros = A.count(0)
+    
+    k = 0
+    while zeros:
+        A[k] = 0
+        zeros = zeros - 1
+        k = k + 1
+ 
+    for k in range(k, len(A)):
+        A[k] = 1
+ 
+if __name__ == '__main__':
+ 
+    A = [0, 0, 1, 0, 1, 1, 0, 1, 0, 0]
+ 
+    sort(A)
+ 
+    # print the rearranged list
+    print(A)
+ 
+```
+
+Time complexity : O(n)
+
+Auxiliary space : O(1)
+
+
+
+## Q3. Segregate positive and negative integers in linear time.
+
+ex )
+
+Input : [9, -3, 5, -2, -8, -6, 1, 3]
+
+Output : [-3, -2, -8, -6, 5, 9, 1, 3]
+
+
+
+[C++]
+
+```c++
+#include <iostream>
+#include <algorithm>
+using namespace std;
+ 
+void partition(int a[], int start, int end)
+{
+    int pIndex = start;
+ 
+    // each time we find a negative number, pIndex is
+    // incremented and that element would be placed before
+    // the pivot
+    for (int i = start; i <= end; i++)
+    {
+        if (a[i] < 0)   // pivot is 0
+        {
+            swap(a[i], a[pIndex]);
+            pIndex++;
+        }
+    }
+}
+ 
+int main()
+{
+    int a[] = { 9, -3, 5, -2, -8, -6, 1, 3 };
+    int n = sizeof(a)/sizeof(a[0]);
+ 
+    partition(a, 0, n - 1);
+ 
+    // print the rearranged array
+    for (int i = 0 ; i < n; i++)
+        cout << a[i] << " ";
+ 
+    return 0;
+}
+```
+
+Time complexity : O(n)
+
+Auxiliary space : O(1)
+
+
+
+[Python]
+
+```Python
+def swap(a, i, j):
+ 
+    temp = a[i]
+    a[i] = a[j]
+    a[j] = temp
+ 
+ 
+def partition(a, start, end):
+ 
+    pIndex = start
+ 
+    # each time we find a negative number, pIndex is incremented
+    # and that element would be placed before the pivot
+    for i in range(start, end + 1):
+        if a[i] < 0:  # pivot is 0
+            swap(a, i, pIndex)
+            pIndex = pIndex + 1
+ 
+ 
+if __name__ == '__main__':
+ 
+    a = [9, -3, 5, -2, -8, -6, 1, 3]
+    partition(a, 0, len(a) - 1)
+    print(a)
+```
+
+Time complexity : O(n)
+
+Auxiliary space : O(1)
+
+
+
+## Linked List
+
+![image-20201208160408069](README%20assets/image-20201208160408069.png)
+
+
+
+Doubly linked list 의 장점
+
+- 순방향 / 역방향 모두 이동 가능
+- 삭제시 더 효율적
+- 삽입시 더 효율적, 이전 노드를 가지고 오기 위해 순회될 필요 없이 이전 노드를 통해 빠르게 가능
+
+
+
+Doubly linked list 의 단점
+
+- DLL의 모든 노드 이전 포인터를 위한 추가 공간 필요(하지만, 단일 포인터(this)로 DLL 구현 가능)
+
+
+
+Circular linked list 의 장점
+
+- 모든 노드가 시작점이 될 수 있음
+- Queue 구현에 효율적임 - 매번 맨앞에 포인터 두개를 가르키게 할 필요가 없음. 마지막 삽입 노드에 대해 포인터 유지, 항상 front는 end 다음으로 볼 수 있음.
+- 애플리케이션에서 주기적으로 list를 반복 탐색하는데에 효율적임
+
+
+
+## Stack
+
+**블록 쌓아서 위에서부터 떼내기**
+
+![image-20201208161458529](README%20assets/image-20201208161458529.png)
+
+
+
+(LIFO) Last-in First-out
+
+push & pop
+
+
+
+## Queue
+
+**들어온 순서대로 내보내기**
+
+![image-20201208161517918](README%20assets/image-20201208161517918.png)
+
+(FIFO) First-in First-out
+
+Insertion (end에다가) & Deletion (front를)
+
+
+
+## Q4. How do you find the middle element of a singly linked list in one pass?
+
+1. 전체 갯수 탐색
+   - 전체 연결 목록을 탐색하여 번호 계산 count를 계산하여 count/2의 노드 반환
+2. 두개 포인터 사용
+   - 하나의 포인터는 1만큼 이동하고 다른 포인터는 2만큼 이동.
+   - 빠른 포인터가 끝에 도달하면 느린 포인터 반환
+
+
+
+## Q5. How to find if a linked list has a loop?
+
+1. 노드를 하나씩 순회하며 해쉬 테이블에 저장. 다음 노드가 1) NULL에 도달하면 false 반환, 2) Hash에 이전에 저장된 노드중 하나를 가르키면 true 반환
+
+```c++
+#include <bits/stdc++.h> 
+using namespace std; 
+
+struct Node { 
+    int data; 
+    struct Node* next; 
+}; 
+  
+void push(struct Node** head_ref, int new_data) 
+{ 
+    struct Node* new_node = new Node; 
+  
+    new_node->data = new_data;
+    new_node->next = (*head_ref); 
+    (*head_ref) = new_node; 
+} 
+ 
+bool detectLoop(struct Node* h) 
+{ 
+    unordered_set<Node*> s; 
+    while (h != NULL) { 
+        
+        if (s.find(h) != s.end()) 
+            return true; 
+   
+        s.insert(h); 
+        h = h->next; 
+    } 
+  
+    return false; 
+} 
+  
+int main() 
+{ 
+    struct Node* head = NULL; 
+  
+    push(&head, 20); 
+    push(&head, 4); 
+    push(&head, 15); 
+    push(&head, 10); 
+  
+    head->next->next->next->next = head; 
+  
+    if (detectLoop(head)) 
+        cout << "Loop found"; 
+    else
+        cout << "No Loop"; 
+  
+    return 0; 
+} 
+```
+
+Time Complexity : O(n)
+
+Auxiliary Space : O(n)
+
+
+
+2. 순회하며 flag 사용
+
+```c++
+#include <bits/stdc++.h> 
+using namespace std; 
+  
+struct Node { 
+    int data; 
+    struct Node* next; 
+    int flag; 
+}; 
+  
+void push(struct Node** head_ref, int new_data) 
+{ 
+    struct Node* new_node = new Node; 
+    new_node->data = new_data; 
+    new_node->flag = 0; 
+  
+    new_node->next = (*head_ref); 
+  
+    /* move the head to point to the new node */
+    (*head_ref) = new_node; 
+} 
+  
+// Returns true if there is a loop in linked list 
+// else returns false. 
+bool detectLoop(struct Node* h) 
+{ 
+    while (h != NULL) { 
+        // If this node is already traverse 
+        // it means there is a cycle 
+        // (Because you we encountering the 
+        // node for the second time). 
+        if (h->flag == 1) 
+            return true; 
+  
+        // If we are seeing the node for 
+        // the first time, mark its flag as 1 
+        h->flag = 1; 
+  
+        h = h->next; 
+    } 
+  
+    return false; 
+} 
+  
+/* Driver program to test above function*/
+int main() 
+{ 
+    /* Start with the empty list */
+    struct Node* head = NULL; 
+  
+    push(&head, 20); 
+    push(&head, 4); 
+    push(&head, 15); 
+    push(&head, 10); 
+  
+    /* Create a loop for testing */
+    head->next->next->next->next = head; 
+  
+    if (detectLoop(head)) 
+        cout << "Loop found"; 
+    else
+        cout << "No Loop"; 
+  
+    return 0; 
+} 
+```
+
+
+
+## Graph
 
