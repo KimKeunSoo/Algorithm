@@ -539,7 +539,7 @@ if p < r
 PARTITION(A, p, r)
     x = A[r]
     i = p-1
-    for j=p to r-1
+    for j = p to r - 1
         if A[j] <= x
             i = i+1
             exchange A[i] with A[j]
@@ -560,6 +560,8 @@ input : {10, 68, 75, 7, 21, 12}
 output : 77568211210
 
 
+
+**Idea : 글자 자체를 XY 와 YX를 비교함. X>Y이라 할지라도 XY<YX 면 X<Y로 sorting**
 
 [C++]
 
@@ -614,6 +616,8 @@ output : { 0,0,0,0,1,1,1,1 }
 
 
 
+**Idea : 0의 갯수 확인 후 출력**
+
 [Python]
 
 ```python
@@ -657,6 +661,8 @@ Input : [9, -3, 5, -2, -8, -6, 1, 3]
 Output : [-3, -2, -8, -6, 5, 9, 1, 3]
 
 
+
+**Idea : pivot을 0으로 둬서 Quicksort 사용**
 
 [C++]
 
@@ -1011,6 +1017,8 @@ Auxiliary Space : O(1)
 
 
 ## Q6. Reverse stack using recursion
+
+**Idea : Stack이 빌때까지 모든 값을 가지고 있다가 비면 다시 밑에서부터 넣음**
 
 ```c++
 #include<bits/stdc++.h> 
@@ -1394,7 +1402,7 @@ Running time : xx
 3. **Internal Property** : **빨강(Red)노드의 자식**은 **검정(Black)**이다. 
    == No Double Red(빨간색 노드가 연속으로 나올 수 없다.)
 4. **Depth Property** : **모든 leaf 노드**에서 **Black Depth는 같다.** 
-   == 즉, 모든 NIL 노드는 Black이며, 모든 노드에 대해서 자손인 leaf 노드에까지 이르는 모든 경로에는 동일한 개수의 블랙 노드가 존재해야 한다.
+   == 즉, <u>모든 NIL 노드는 Black</u>이며, 모든 노드에 대해서 자손인 leaf 노드에까지 이르는 모든 경로에는 동일한 개수의 블랙 노드가 존재해야 한다.
 
 
 
@@ -1410,16 +1418,44 @@ Running time : xx
 
 **현재 insert된 node [z]의 <u>uncle node[w]의 색깔</u>**에 따라 수행하는 과정이 다름.
 
-1. **Restructuring** : <u>w가 검정</u>일때
+Insertion 할때
+
+1. **Restructuring** : 부모의 형제인 <u>w가 검정</u> 혹은 <u>NULL</u>일때
+
+   W가 NULL이면,
+
+      1. v가 조부모의 right child이면 left-rotation
+
+      2. v가 조부모의 left child 이면 right-rotation
+
+
+         이거 다하고
+
+
    1. 나[z]와 부모[v], 증부모를 오름차순으로 정렬
    2. 무조건 가운데 있는 값을 부모로 만들고 나머지 둘을 자식으로 만듬
    3. 올라간 가운데 있는 값을 검정(Black)으로 만들고 나머지 두 자식들을 빨강(Red)로 만듬
-2. **Recoloring** : <u>w가 빨강</u>일때
+
+2. **Recoloring** : 부모의 형제인 <u>w가 빨강</u>일때
+
    1. 부모[v], uncle[w]를 검정(Black)으로 하고 증부모를 빨강(Red)로 한다.
    2. 증부모가 Root node가 아니었을 시 Double Red가 다시 발생할 수 있다.
       즉, 만약 증부모가 Root node이면 Black이여되는데 Red이니까 다시 올라가서 Restructuring과 Recoloring을 해야함 
 
+Deletion 할때는 BST와 같음, 
+대신 Red자리에 Black을 넣을시에는, Red로 변환해서 넣기
+대신 Red자리에 Red 또는 NIL을 넣을시에는, 아무것도 안함
 
+대신 Black자리에 Red를 넣을시에는, Black으로 변환해서 넣기
+
+- Case 1 : 삭제할 노드 z의 child가 없을 경우
+  - z 노드 삭제 후 z의 parent의 포인터를 NIL로 두기
+- Case 2 :  삭제할 노드 z의 child가 1개 있을 경우
+  - z 노드 삭제 후 z의 parent와 z의 child를 연결시켜주기
+- Case 3 :  삭제할 노드 z의 child가 2개 있을 경우
+  1. z의 Successor 노드를 찾는다.
+  2. Successor의 값을 z에 덮어씌운다.
+  3. Successor 노드를 삭제한다.
 
 ### 다. 변수명 및 특징
 
@@ -1448,13 +1484,15 @@ Running time : xx
 ### 라. Red-Black Tree 의 장점
 
 - 빈번한 Insertion과 Deletion이 필요할 때 유용함.
-- Binary Tree의 Balance를 자체적으로 항상 유지하므로 런타임 O(logn)가 보장됨.
+-  Binary Tree의 Balance를 자체적으로 항상 유지하므로 런타임 O(logn)가 보장됨.
   반면, BST(Binary Search Tree)는 O(h)이라서 안좋음.
 - 다양한 시나리오에서 상대적으로 적은 상수들로 구현 가능.
 
 
 
 ### 마. Red-Black Tree의 주요 함수 정리
+
+위에 Insert를 위한 rule들을 적용할때 uncle node인 [w]가 null이면 rotation을 한다.
 
 ![image-20201209184752607](README%20assets/image-20201209184752607.png)
 
@@ -1498,7 +1536,7 @@ Node* RedblackTree::getGrandNode(Node* cur)
 
 // uncle 노드를 반환해주는 함수
 Node* RedblackTree::getUncleNode(Node* cur)
-{
+{000000000000000000000000000000
 	Node* tempGrand(getGrandNode(cur));
 	if (tempGrand == nullptr) return nullptr;
 	// 조부모의 오른쪽 자식노드가 부모노드면 왼쪽이 삼촌노드다.
@@ -1633,4 +1671,314 @@ void RedblackTree::insertNode(Node* root, const int& data)
 	insertFix(tail);		// 레드블랙트리의 특성을 만족하도록 매 삽입연산 때 트리 구조를 수정한다.
 }
 ```
+
+
+
+## Hash Table
+
+#### : **해시 테이블은 associatvie array(연관배열 구조)를 이용하여 key에 결과 값 value를 저장하는 자료구조이다.**
+
+mapping function을 hash function이라고 한다. key로 index를 받고 그 index로 어디 저장할지를 정한다
+
+
+
+##### 연관배열 구조(associative array)란,
+
+키(key) 1개와 값(value) 1개가 1:1로 연관되어 있는 자료구조이다. 따라서 키(key)를 이용하여 값(value)을 도출할 수 있다.
+
+##### 연관배열 구조는 다음의 명령을 지원한다.
+
+- 키(key)와 값(value)이 주어졌을 때, 연관 배열에 그 두 값(key & value)을 저장하는 명령
+- 키(key)가 주어졌을 때, 연관되는 값(value)을 얻는 명령
+- 키(key)와 새로운 값(value)이 주어졌을 때, 원래 키에 연관된 값(value)을 새로운 값(value)으로 교체하는 명령
+- 키(key)가 주어졌을 때, 그 키(key)에 연관된 값(value)을 제거하는 명령
+
+위의 명령은 해시테이블에서도 동일하게 적용이 된다.
+
+
+
+### 1. 해시 테이블의 구조(Hash Table Data Structure)
+
+![img](README%20assets/1iHTnDFd3sR5FqjHD1FDu9A.png)
+
+##### 해시 테이블은 키(Key), 해시함수(Hash Function), 해시(Hash), 값(value), 저장소(Bucket, Slot)로 이루어져 있다.
+
+##### 키(key)는 해시함수(hash function)를 통해 해시(hash)로 변경이 되며 해시는 값(value)과 매칭되어 저장소에 저장이 된다.
+
+- 키(key) : 고유한 값이며, 해시 함수의 input이 된다. 다양한 길이의 값이 될 수 있다. 이 상태로 최종 저장소에 저장이 되면 다양한 길이 만큼의 저장소를 구성해 두어야 하기 때문에 해시 함수로 값을 바꾸어 저장이 되어야 공간의 효율성을 추구할 수 있다.
+- 해시함수(Hash Function) : 키(key)를 해시(hash)로 바꿔주는 역할을 한다. 다양한 길이를 가지고 있는 키(key)를 일정한 길이를 가지는 해시(hash)로 변경하여 저장소를 효율적으로 운영할 수 있도록 도와준다. 다만, 서로 다른 키(key)가 같은 해시(hash)가 되는 경우를 해시 충돌(Hash Collision)이라고 하는데, 해시 충돌을 일으키는 확률을 최대한 줄이는 함수를 만드는 것이 중요하다.
+- 해시(Hash) : 해시 함수(Hash Function)의 결과물이며, 저장소(bucket, slot)에서 값(value)과 매칭되어 저장된다.
+- 값(Value) : 저장소(bucket, slot)에 최종적으로 저장되는 값으로 키와 매칭되어 저장, 삭제, 검색, 접근이 가능해야 한다.
+
+![img](README%20assets/1yCYrVNOVhKJccNFkN76QHw.jpeg)
+
+
+
+### 2. Collision Resolution
+
+
+
+#### 가. Chaining 시간 복잡도 (Big-O) - 1
+
+복잡도를 계산하기 전, 한 가지를 추가하자면 해시 테이블의 저장소(Bucket)의 길이를 ‘n’, 키(key)의 수를 ‘m’이라고 가정했을 때, 평균적으로 저장소에서 1개의 hash당 (m/n)개의 키가 들어있다. 이를 load factor인  ‘α’라고 정의한다.
+
+```null
+m/n = α (1개의 Hash당 평균적으로 α개의 키가 들어있다.)
+```
+
+chaining기법은 collision이 있다고 하더라도 chaining을 통해 같은 slot에 넣는다.
+
+#### Insertion(저장)
+
+해시 테이블에서 자료를 저장하기 위해서는 해시 함수(Hash Fucntion)으로 키(key)를 해시(hash)로 변경해야 한다. 위의 사진처럼 해시 함수가 input key를 7로 나눈 나머지로 변경해서 출력했을 때, 키(key)는 ‘76’, 해시(Hash)는 ‘6’이다.
+
+그러면 미리 준비해놓은 0, 1, 2, 3, 4, 5, 6의 저장소(bucket, slot) 중에 맞는 해시(hash)값을 찾아 해당 값(value)를 저장한다.
+
+해시 함수로 해시를 산출하는 과정에서 서로 다른 key가 같은 hash로 변경되는 문제가 발생할 수 있는데, 이는 key 와 value가 1:1로 매칭이 되어야 한다는 규칠을 위배한 것이되므로 이 문제를 해결하면서 저장되어야 한다. 이는 **해시 충돌(Hash Collision)** 이라고 하며 해시출동 해결에 대한 내용은 후술 하겠다.
+
+##### Insertion Big-O
+
+저장 단계의 시간복잡도는 O(1)이다. 키(key)는 고유하며 해시함수(hash function)의 결과로 나온 해시(hash)와 값(value)를 저장소에 넣으면 되기 때문이다. 이 때, 해시함수의 시간복잡도는 함께 고려하지 않는다.
+하지만, 최악의 경우 O(n)이 될 수 있다. 해시 충돌로 인해 모든 bucket의 value들을 찾아봐야 하는 경우도 있기 때문이다. 이에 관해서도 해시충돌과 함께 후술하겠다.
+
+
+
+#### Deletion(삭제)
+
+**저장되어 있는 값을 삭제할 때는 저장소에서 해당 key와 매칭되는 값(value)를 찾아서 삭제하면 된다. (저장소에는 hash와 value가 함께 저장되어 있으므로 함께 지우면 된다.)**
+
+##### Deletion Big-O
+
+삭제 단계의 시간복잡도는 O(1)이다. 키(key)는 고유하며 해시함수(hash function)의 결과로 나온 해시(hash)에 매칭되는 값(value)를 삭제하면 되기 때문이다. 이 때, 해시함수의 시간복잡도는 함께 고려하지 않는다.
+하지만, 최악의 경우 O(n)이 될 수 있다. 해시 충돌로 인해 모든 bucket의 value들을 찾아봐야 하는 경우도 있기 때문이다. 이에 관해서도 해시충돌과 함께 후술하겠다.
+
+
+
+#### Search(검색)
+
+키(key)로 값(value)를 찾아내는 과정은 Deletion 과정과 비슷한다. 
+1) 키로 hash를 구한다. 
+2) hash로 값(value)를 찾는다.
+
+##### Search Big-O
+
+저장 단계의 시간복잡도는 O(1)이다. 키(key)는 고유하며 해시함수(hash function)의 결과로 나온 해시(hash)에 매칭되는 값(value)를 찾으면 되기 때문이다. 이 때, 해시함수의 시간복잡도는 함께 고려하지 않는다.
+하지만, 최악의 경우 O(n)이 될 수 있다. 해시 충돌로 인해 모든 bucket의 value들을 찾아봐야 하는 경우도 있기 때문이다. 
+
+
+
+### 3. Open Addressing(개방주소법)
+
+개방주소법은 데이터의 해시(hash)가 변경되지 않았던 chaining과는 달리 비어있는 해시(hash)를 찾아 데이터를 저장하는 기법이다. 따라서 개방주소법에서의 해시테이블은 1개의 해시와 1개의 값(value)가 매칭되어 있는 형태로 유지된다.
+
+![img](README%20assets/19O8Eyd9wEhZKhwrXzKJaw-1607584344636.png)
+
+위의 그림을 보면, Sandra가 저장될때 해시가 John으로 채워져 있어서 그 다음 Hash에 Sandra를 저장했다. 그리고 Ted의 해시도 Sandra가 저장되어 있으므로 그 다음 해시에 Ted를 저장했다. 이처럼 비어있는 해시를 찾아 저장하는 방법을 Open Addressing라고 한다.
+
+이 때, 비어있는 해시(Hash)를 찾는 과정은 동일해야 한다.(일정한 규칙을 따라 찾아가야 한다.)
+
+Open Addressing는 위에서 언급한 비어있는 해시를 찾는 규칙에 따라 다음과 같이 구분할 수 있다.
+
+- 선형 탐색(Linear Probing): 다음 해시(+1)나 n개(+n)를 건너뛰어 비어있는 해시에 데이터를 저장한다.
+- 제곱 탐색(Quadratic Probing): 충돌이 일어난 해시의 제곱을 한 해시에 데이터를 저장한다.
+- 이중 해시(Double Hashing): 다른 해시함수를 한 번 더 적용한 해시에 데이터를 저장한다.
+
+
+
+#### Open Addressing의 장단점
+
+장점 :
+1) 또 다른 저장공간 없이 해시테이블 내에서 데이터 저장 및 처리가 가능하다.
+2) 또 다른 저장공간에서의 추가적인 작업이 없다.
+단점 :
+1) 해시 함수(Hash Function)의 성능에 전체 해시테이블의 성능이 좌지우지된다.
+2) 데이터의 길이가 늘어나면 그에 해당하는 저장소를 마련해 두어야 한다.
+
+
+
+Chaining 에서 정의한 ‘α’를 Open Addressing 에서도 정의하자면, 해시 테이블의 저장소(Bucket)의 길이를 ’n’, 키(key)의 수를 ‘m’이라고 가정했을 때, ‘α’는 1보다 작거나 같다. 저장소 1개 버킷 당 1개의 값(value)만 가지기 때문이다.
+
+```null
+m/n = α (α <= 1)
+```
+
+
+
+#### Insertion & Deletion & Search :
+
+삽입, 삭제, 검색 모두 대상이 되는 Hash를 찾아가는 과정에 따라 시간복잡도가 계산이 된다. 해시함수를 통해 얻은 Hash가 비어있지 않으면 다음 버킷을 찾아가야 한다. 이 찾아가는 횟수가 많아지면 많아질 수록 시간복잡도가 증가한다. 최상의 경우 O(1) ~ 최악의 경우 (O(n)).
+
+따라서 Open Addressing에서는 비어있는 공간을 확보하는 것(= 저장소가 어느 정도 채워졌을 때 저장소의 사이즈를 늘려주는 것)이 필요하다.
+
+최악의 경우 저장소를 모두 살펴보아야 하는 경우가 생길 수 있다.(O(n))
+
+
+
+
+
+### 4. Hashing 함수
+
+
+
+이번엔 해시함수로 해시충돌을 완화하는 방법을 살펴본다. 해시테이블의 크기가 m이라면, 좋은 해시함수는 임의의 키값을 임의의 해시값에 매핑할 확률이 1/m이 될 것이다. 다시 말해, 특정 값에 치우치지 않고 해시값을 고르게 만들어내는 해시함수가 좋은 해시함수라고 볼 수 있다.
+
+### division method
+
+나눗셈법은 간단하면서도 빠른 연산이 가능한 해시함수이다. 숫자로 된 키를 해시테이블 크기 m으로 나눈 나머지를 해시값으로 반환한다. m은, 대개 <u>소수(prime number)</u>를 쓰며 특히 2의 제곱수와 거리가 먼 소수를 사용하는 것이 좋다. 다시 말해 해시함수 특성 때문에 해시테이블 크기가 정해진다는 단점이 있다.
+
+### multiplication method
+
+숫자로 된 키가 k이고 <u>A는 0과 1 사이의 실수</u>일 때 곱셈법은 다음과 같이 정의된다. <u>m은 보통 2의 제곱수</u>로 정한다. 나눗셈법보다는 몇개의 연산을 해야되기 때문에 다소 느리다. 2진수 연산에 최적화한 컴퓨터 구조를 고려한 해시함수이다.
+
+h(k) = floor( ( k A mod 1) × m )
+
+### universal hasing
+
+다수의 해시함수를 만들고, 이 해시함수의 집합 H에서 무작위로 해시함수를 선택해 해시값을 만드는 기법이다. H에서 무작위로 뽑은 해시함수가 주어졌을 때, 임의의 키값을 임의의 해시값에 매핑할 확률을 1/m로 만드려는 것이 목적이다. 다음과 같은 특정 조건의 해시함수 집합 H는 1/m으로 만드는 게 가능하다고 수학적으로 증명됐다.
+
+- 해시테이블의 크기 m를 소수로 정한다.
+- 키값을 다음과 같이 r+1개로 쪼갠다 : k0, k1,…, kr
+- 0부터 m−1 사이의 정수 가운데 하나를 무작위로 뽑는다. 분리된 키값의 개수(r+1)만큼 반복해서 뽑는다. 이를 a=[a0,a1,…,ar]로 둔다. 따라서 a의 경우의 수는 모두 mr+1가지이다.
+- 해시함수를 다음과 같이 정의한다 : ha(x)=Σri=0(aikimod m)
+- a가 mr+1가지이므로 해시함수의 집합 H의 요소 수 또한 mr+1개이다.
+
+위와 같은 조건에서는 키가 동일하더라도 a가 얼마든지 랜덤하게 달라질 수 있고, 이에 해당하는 해시함수 ha 또한 상이해지기 때문에 H는 유니버설 함수가 된다.
+
+
+
+### 5. Hash Table Data Structure의 단점
+
+- **<u>순서가 있는 배열에는 어울리지 않는다.</u>**
+  : 상하관계가 있거나, 순서가 중요한 데이터의 경우 Hash Table은 어울리지 않다. 순서와 상관없이 key만을 가지고 hash를 찾아 저장하기 때문이다.
+- **<u>공간 효율성이 떨어진다.</u>**
+  : 데이터가 저장되기 전에 미리 저장공간을 확보해 놓아야 한다. 공간이 부족하거나 아예 채워지지 않은 경우가 생길 가능성이 있다.
+- **<u>Hash Function의 의존도가 높다.</u>**
+  : 평균 데이터 처리의 시간복잡도는 O(1)이지만, 이는 해시 함수의 연산을 고려하지 않는 결과이다. 해시함수가 매우 복잡하다면 해시테이블의 모든 연산의 시간 효율성은 증가할 것이다.
+
+해시 테이블은 키를 가지고 빠르게 value에 접근하고 조작할 수 있는 장점이 있어서 많이 사용된다. 예를 들어 주소록 저장형태의 경우 이름 — 전화번호의 매칭을 이용하여 데이터를 처리한다. 
+
+
+
+
+
+## DFS(Depth-first Search, 깊이 우선 탐색)
+
+**Stack** 혹은 **재귀** 사용
+
+이동할때 마다 가중치가 붙어서 이동한다거나 이동 과정에서 여러 제약이 있을 경우 사용
+
+Time : 𝛳(V+E) , 모든 vertex와 edge가 실행되는것이 보장되기 때문에 O가 아님.
+
+```c
+DFS(G, u)
+    u.visited = true
+    for each v ∈ G.Adj[u]
+        if v.visited == false
+            DFS(G,v)
+ 
+init() 
+    For each u ∈ G
+        u.visited = false
+     For each u ∈ G
+       DFS(G, u)
+```
+
+1. 스택에 시작 노드를 넣는다.
+2. 스택이 비어있으면 실행을 멈추고 False를 반환한다.
+3. 스택의 맨 위 노드가 찾고자 하는 노드라면 탐색을 종료하고 True를 반환한다.
+4. 스택의 맨 위 노드가 찾고자 하는 노드가 아니라면 해당 노드를 POP한다. 스택에 들어온 적이 없는 POP한 노드의 모든 이웃노드를 찾아서 순서대로 스택에 넣는다.
+5. 3번으로 돌아간다.
+
+
+
+![img](README%20assets/dfs_1.png)
+
+A를 시작노드로 한다.
+
+![img](README%20assets/dfs_2.png)
+
+A에 인접한 B, C가 스택에 저장된다.
+
+![img](README%20assets/dfs_3.png)
+
+스택의 맨 위에 있는 C를 꺼내서 Visited 배열에 넣는다. C의 인접한 노드인 D, F가 스택에 저장된다.
+
+![img](README%20assets/dfs_4.png)
+
+스택의 맨 위에 있는 F를 꺼내서 Visited 배열에 넣는다. F에 인접한 노드인 D는 이미 Stack에 있으므로 넘어간다.
+
+![img](README%20assets/dfs_5.png)
+
+스택의 맨 위에 있는 D를 꺼내서 Visited 배열에 넣는다. D에 인접한 C, F는 Visited 배열에 있으며 B는 스택에 있으므로 넘어간다.
+
+![img](README%20assets/dfs_6.png)
+
+스택의 맨 위에 있는 B를 꺼내서 Visited 배열에 넣는다. 스택이 비어있으므로 탐색을 종료한다.
+
+### ⭕ DFS 장점
+
+- 현 경로상의 노드를 기억하기 때문에 적은 메모리를 사용한다.
+- 찾으려는 노드가 깊은 단계에 있는 경우 BFS 보다 빠르게 찾을 수 있다.
+
+### ❌ DFS 단점
+
+- 해가 없는 경로를 탐색 할 경우 단계가 끝날 때까지 탐색한다. 효율성을 높이기 위해서 미리 지정한 임의 깊이까지만 탐색하고 해를 발견하지 못하면 빠져나와 다른 경로를 탐색하는 방법을 사용한다.
+- DFS를 통해서 얻어진 해가 최단 경로라는 보장이 없다. DFS는 해에 도착하면 탐색을 종료하기 때문이다.
+
+
+
+## BFS(Breadth-first Search, 너비 우선 탐색)
+
+FIFO(First-in First-out)의  **Queue**를 사용한다.
+
+**최단거리 탐색할 시 사용**
+
+O(V + E) : 모든 vertex가 한번씩은 enqueue 된다.
+
+```python
+create a queue Q 
+mark v as visited and put v into Q 
+while Q is non-empty 
+    remove the head u of Q 
+    mark and enqueue all (unvisited) neighbors of u
+```
+
+
+
+### 그림으로 보기
+
+![img](README%20assets/bfs_1.png)
+
+A노드 부터 탐색을 시작한다.
+
+![img](README%20assets/bfs_2.png)
+
+A노드를 Visited 리스트에 넣는다. A노드에 인접한 B, C를 큐에 넣는다.
+
+![img](README%20assets/bfs_3.png)
+
+큐의 맨 앞에 있는 B를 Visited 리스트에 넣는다. B에 인접한 노드 D를 큐에 넣는다.
+
+![img](README%20assets/bfs_4.png)
+
+큐의 맨 앞에 있는 C를 Visited 리스트에 넣는다. C에 인접한 노드 F를 큐에 넣는다.
+
+![img](README%20assets/bfs_5.png)
+
+큐의 맨 앞에 있는 D를 Visited 리스트에 넣는다. D에 인접한 F는 이미 큐에 있으므로 넘어간다.
+
+![img](README%20assets/bfs_6.png)
+
+큐의 맨 앞에 있는 F를 Visited 리스트에 넣는다. 큐는 비어있게 되므로 탐색을 종료한다.
+
+### ⭕ BFS 장점
+
+- 답이 되는 경로가 여러 개인 경우에도 최단경로임을 보장한다.
+- 최단 경로가 존재하면 깊이가 무한정 깊어진다고 해도 답을 찾을 수 있다.
+
+### ❌ BFS 단점
+
+- 경로가 매우 길 경우에는 탐색 가지가 급격히 증가함에 따라 보다 많은 기억 공간을 필요로 하게 된다.
+- 해가 존재하지 않는다면 유한 그래프(finite graph)의 경우에는 모든 그래프를 탐색한 후에 실패로 끝난다.
+- 무한 그래프(infinite graph)의 경우에는 결코 해를 찾지도 못하고, 끝내지도 못한다.
 
