@@ -1,10 +1,6 @@
 # 전화번호 목록
 
-- darklight
-
-- sublimevimemacs
-
-- Python3 
+- 
 
 ###### 문제 설명
 
@@ -64,7 +60,7 @@ def solution(phone_book):
 
 
 
-해쉬로 풀지 않았다. O(n^2^)의 복잡도로 풀었는데 처음 startswith를 find로 써서 했다가 30분날렸다. (find, startswith 정리함)
+해쉬로 풀지 않았다. O(n^2^)의 복잡도로 풀었는데 처음에 접두어의 의미를 모르고 그냥 포함되는거만 찾으면 되겠다 싶어서 find로 썼다가 40분을 날린 뒤, 처음에 붙이는 접 두! 어의 의미를 깨닫고  startswith를 써서 풀었다. (find, startswith 정리함, 접두어는 안함 ㅅㅂ)
 
 근데 심지어 누구는 zip(zip 정리함)이란걸 써서 더 간단하게 해뒀더라. 아래 첨부한다.
 
